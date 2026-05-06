@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - HostelMart</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold text-gray-800">HostelMart</h1>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                        <i class="fas fa-home mr-2"></i>Home
+                    </a>
+                    <a href="login.html" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                        <i class="fas fa-sign-in-alt mr-2"></i>Login
+                    </a>
+                    <a href="signup.html" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                        <i class="fas fa-user-plus mr-2"></i>Sign Up
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold text-gray-800">Available Products</h2>
+            <p class="text-gray-600 mt-2">Browse our wide selection of products for hostel residents</p>
+        </div>
+        
+        <!-- Product Grid -->
+        <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Products will be loaded here -->
+            <div class="text-center col-span-full">
+                <i class="fas fa-spinner fa-spin text-4xl text-gray-400 mb-4"></i>
+                <p class="text-gray-600">Loading products...</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Load products from localStorage and products.js
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProducts();
+        });
+        
+        function loadProducts() {
+            const productGrid = document.getElementById('productGrid');
+            productGrid.innerHTML = '';
+            
+            // Get products from multiple sources
+            const defaultProducts = [
+                {
+                    id: 1,
+                    name: "Maggi Noodles",
+                    description: "Instant noodles perfect for late-night cravings",
+                    price: 15,
+                    image: "https://images.unsplash.com/photo-1617072848585-3f5e5d5c2a3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZWF0LXNlcGltcGlkLzYlMXw%3D&auto=format&fit=crop&w=800&q=80",
+                    location: "archimedes",
+                    category: "grocery"
+                },
+                {
+                    id: 2,
+                    name: "Coca Cola",
+                    description: "Refreshing cold drink",
+                    price: 25,
+                    image: "https://images.unsplash.com/photo-1622483227025-075b5fe894e0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZWF0LXNlcGltcGlkLzYlMXw%3D&auto=format&fit=crop&w=800&q=80",
+                    location: "franklin",
+                    category: "beverages"
+                },
+                {
+                    id: 3,
+                    name: "Lays Chips",
+                    description: "Crispy potato chips",
+                    price: 20,
+                    image: "https://images.unsplash.com/photo-1528371795362-fd1c07f209c1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZWF0LXNlcGltcGlkLzYlMXw%3D&auto=format&fit=crop&w=800&q=80",
+                    location: "aristotle",
+                    category: "snacks"
+                }
+            ];
+            
+            const sellerProducts = JSON.parse(localStorage.getItem('sellerProducts') || '[]');
+            const allProducts = [...defaultProducts, ...sellerProducts];
+            
+            // Get cart from localStorage
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            
+            allProducts.forEach(product => {
+                const cartItem = cart.find(item => item.id === product.id);
+                const quantity = cartItem ? cartItem.quantity : 0;
+                
+                const productCard = document.createElement('div');
+                productCard.className = 'bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow duration-300';
+                
+                let controlsHTML = '';
+                if (quantity > 0) {
+                    controlsHTML = `
+                        <div class="flex items-center space-x-2 mt-4">
+                            <button onclick="updateQuantity(${product.id}, -1)" class="flex-1 bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition-colors duration-200 font-bold text-lg">-</button>
+                            <span class="flex-1 text-center font-bold text-lg border-2 border-gray-300 rounded-lg py-1">${quantity}</span>
+                            <button onclick="updateQuantity(${product.id}, 1)" class="flex-1 bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition-colors duration-200 font-bold text-lg">+</button>
+                        </div>
+                    `;
+                } else {
+                    controlsHTML = `
+                        <button onclick="addToCart(${product.id})" class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition-colors duration-200 font-semibold">
+                            Add to Cart
+                        </button>
+                    `;
+                }
+                
+                productCard.innerHTML = `
+                    <div class="w-full h-48 overflow-hidden rounded-lg mb-4">
+                        <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+                    </div>
+                    <h3 class="font-semibold text-gray-800">${product.name}</h3>
+                    <p class="text-gray-600 text-sm">${product.description}</p>
+                    <p class="mt-2 text-lg font-bold text-green-600">₹${product.price}</p>
+                    <div class="text-sm text-gray-500">
+                        <i class="fas fa-map-marker-alt mr-1"></i>${product.location}
+                        <span class="ml-2">
+                            <i class="fas fa-tag mr-1"></i>${product.category}
+                        </span>
+                    </div>
+                    ${controlsHTML}
+                `;
+                
+                productGrid.appendChild(productCard);
+            });
+        }
+        
+        function addToCart(productId) {
+            const product = allProducts.find(p => p.id === productId);
+            if (product) {
+                const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+                const existingItem = cart.find(item => item.id === productId);
+                
+                if (existingItem) {
+                    existingItem.quantity += 1;
+                } else {
+                    cart.push({
+                        id: product.id,
+                        name: product.name,
+                        price: product.price,
+                        image: product.image,
+                        quantity: 1
+                    });
+                }
+                
+                localStorage.setItem('cart', JSON.stringify(cart));
+                alert(`${product.name} added to cart!`);
+                loadProducts(); // Refresh to show updated quantity
+            }
+        }
+        
+        function updateQuantity(productId, change) {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const item = cart.find(item => item.id === productId);
+            
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    const index = cart.indexOf(item);
+                    cart.splice(index, 1);
+                }
+                
+                localStorage.setItem('cart', JSON.stringify(cart));
+                loadProducts(); // Refresh to show updated quantity
+            }
+        }
+    </script>
+</body>
+</html>
