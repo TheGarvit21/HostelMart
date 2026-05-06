@@ -383,6 +383,10 @@
             const currentUser = JSON.parse(localStorage.getItem('currentUser'));
             const isSeller = currentUser && currentUser.category === 'seller';
             
+            // Combine original products with seller-added products from localStorage
+            const sellerProducts = JSON.parse(localStorage.getItem('sellerProducts') || '[]');
+            const allProducts = [...products, ...sellerProducts];
+            
             if (isSeller) {
                 // Show seller interface
                 document.getElementById('sellerSidebar').classList.remove('hidden');
@@ -397,8 +401,8 @@
                 
                 const productGrid = document.getElementById('userProductGrid');
                 productGrid.innerHTML = ''; // Clear existing products
-                 
-                products.forEach(product => {
+                
+                allProducts.forEach(product => {
                      const cartItem = cart.find(item => item.id === product.id);
                      const quantity = cartItem ? cartItem.quantity : 0;
                      
@@ -1056,7 +1060,13 @@
                 category: document.getElementById('productCategory').value
             };
             
+            // Add to global products array
             products.push(newProduct);
+            
+            // Store seller-added products in localStorage
+            const sellerProducts = JSON.parse(localStorage.getItem('sellerProducts') || '[]');
+            sellerProducts.push(newProduct);
+            localStorage.setItem('sellerProducts', JSON.stringify(sellerProducts));
             
             // Update products.js file content (in real app, this would be API call)
             alert(`Product "${newProduct.name}" added successfully to ${document.getElementById('productLocation').value}!`);
