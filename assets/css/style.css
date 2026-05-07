@@ -1,0 +1,50 @@
+/* Custom styles for HostelMart */
+
+:root {
+    --brand-orange: #FB923C;
+    --brand-green: #10B981;
+    --brand-green-dark: #059669;
+}
+
+.logo-orange {
+    background-color: var(--brand-orange);
+}
+
+.logo-green {
+    color: var(--brand-green);
+}
+
+.cart-green {
+    background-color: var(--brand-green);
+}
+
+.cart-green:hover {
+    background-color: var(--brand-green-dark);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #bbb;
+}
+
+/* Modal animation (simple fade) */
+.modal-overlay {
+    transition: opacity 0.3s ease;
+}
+
+.hidden {
+    display: none !important;
+}
