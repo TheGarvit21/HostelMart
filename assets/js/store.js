@@ -64,34 +64,48 @@ const Store = {
         }
     },
 
-    handleSettingsUpdate: (event) => {
+    handleSettingsUpdate: async (event) => {
         event.preventDefault();
-        const user = Storage.get('currentUser', null);
-        const formData = new FormData(event.target);
-        
-        if (formData.get('currentPassword') !== user.password) {
-            alert('Current password incorrect.');
+        const token = Cookie.get('token');
+        if (!token) {
+            alert('Session expired. Please log in again.');
             return;
         }
-        
-        const updatedUser = {
-            ...user,
+
+        const formData = new FormData(event.target);
+        const payload = {
             name: formData.get('name'),
             email: formData.get('email'),
             mobile: formData.get('mobile'),
             room: formData.get('room'),
-            password: formData.get('newPassword') || user.password
+            currentPassword: formData.get('currentPassword'),
+            newPassword: formData.get('newPassword') || undefined
         };
         
-        const users = Storage.get('users', []);
-        const idx = users.findIndex(u => u.email === user.email);
-        if (idx !== -1) {
-            users[idx] = updatedUser;
-            Storage.set('users', users);
-            Storage.set('currentUser', updatedUser);
-            alert('Settings updated!');
-            UI.hideModal('settingsModal');
-            window.location.reload();
+        try {
+            const API_BASE_URL = window.CONFIG ? window.CONFIG.API_BASE_URL : 'http://localhost:5000/api';
+            const response = await fetch(`${API_BASE_URL}/auth/update`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                Storage.set('currentUser', data.user);
+                alert('Settings updated successfully!');
+                UI.hideModal('settingsModal');
+                window.location.reload();
+            } else {
+                alert(data.message || 'Failed to update settings.');
+            }
+        } catch (error) {
+            console.error('[Store] Settings update error:', error);
+            alert('Failed to connect to authentication server. Please ensure backend is running.');
         }
     }
 };
