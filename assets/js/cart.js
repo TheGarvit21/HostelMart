@@ -179,14 +179,14 @@ const Cart = {
                 Cart.data = [];
                 Storage.set('cart', []);
                 Cart.updateCount();
-                alert(`Order placed successfully to database! Total: ₹${total}.`);
+                alert(`Order placed successfully! Total: ₹${total}.`);
                 UI.hideModal('cartModal');
             } else {
                 alert(data.message || 'Failed to place order.');
             }
         } catch (error) {
             console.error('[PlaceOrder] Connection Error:', error);
-            alert('Failed to connect to database server. Please ensure backend is active.');
+            alert('Failed to connect. Please check your internet connection and try again.');
         }
     }
 };

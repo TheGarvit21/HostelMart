@@ -138,7 +138,7 @@ const Store = {
             }
         } catch (error) {
             console.error('[Store] Settings update error:', error);
-            alert('Failed to connect to authentication server. Please ensure backend is running.');
+            alert('Connection error. Please check your internet connection and try again.');
         }
     }
 };

@@ -279,7 +279,7 @@ const Seller = {
             }
         } catch (error) {
             console.error('[DeleteProduct] Connection Error:', error);
-            alert('Failed to connect to the backend server.');
+            alert('Connection error. Please try again later.');
         }
     },
 
@@ -384,7 +384,7 @@ const Seller = {
             }
         } catch (error) {
             console.error('[UpdateProduct] Connection Error:', error);
-            alert('Failed to connect to the backend server. Please verify connections.');
+            alert('Connection error. Please try again later.');
         }
     },
 
@@ -461,14 +461,14 @@ const Seller = {
             const data = await response.json();
 
             if (response.ok && data.success) {
-                alert('Product added successfully to database!');
+                alert('Product listed successfully!');
                 Seller.showDashboard();
             } else {
                 alert(data.message || 'Failed to add product.');
             }
         } catch (error) {
             console.error('[AddProduct] Connection Error:', error);
-            alert('Failed to connect to the backend server. Please verify connections.');
+            alert('Connection error. Please check your internet connection and try again.');
         }
     },
 

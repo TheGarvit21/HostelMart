@@ -71,7 +71,7 @@ const Auth = {
             }
         } catch (error) {
             console.error('[Auth] Login error:', error);
-            alert('Failed to connect to authentication server. Please ensure backend is running.');
+            alert('Connection error. Please check your internet connection and try again.');
         }
     },
 
@@ -111,7 +111,7 @@ const Auth = {
             }
         } catch (error) {
             console.error('[Auth] Sign up error:', error);
-            alert('Failed to connect to authentication server. Please ensure backend is running.');
+            alert('Connection error. Please check your internet connection and try again.');
         }
     },
 
