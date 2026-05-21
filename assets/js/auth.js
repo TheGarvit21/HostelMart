@@ -117,48 +117,60 @@ const Auth = {
 
     logout: () => {
         Auth.clearLocalSession();
+        Auth.hideUserAvatar();
         window.location.href = 'index.html';
     },
 
     clearLocalSession: () => {
         Cookie.remove('token');
         Storage.remove('currentUser');
+        Auth.hideUserAvatar();
+    },
+
+    getInitials: (name) => {
+        const words = name.trim().split(' ');
+        if (words.length === 1) {
+            return words[0].substring(0, 2).toUpperCase();
+        }
+        return words.map(word => word[0]).join('').toUpperCase().substring(0, 2);
     },
 
     updateUI: (userName) => {
-        const loginButton = document.querySelector('button[onclick="openLoginModal()"]');
-        if (loginButton) {
-            loginButton.innerHTML = `
-                <div class="relative group">
-                    <div class="flex items-center space-x-2 cursor-pointer">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                        </svg>
-                        <span class="font-semibold text-gray-700 hover:text-green-600">${userName}</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                    </div>
-                    <div class="absolute top-full right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                        <div class="py-1">
-                            <button onclick="window.openSettingsModal()" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c-.94 1.543.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c.94-1.543-.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                </svg>
-                                Settings
-                            </button>
-                            <button onclick="Auth.logout()" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 font-medium">
-                                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                                </svg>
-                                Logout
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            loginButton.removeAttribute('onclick');
+        const user = Storage.get('currentUser', null);
+        const loginButton = document.getElementById('loginButton');
+        const userAvatar = document.getElementById('userAvatar');
+        const userInitials = document.getElementById('userInitials');
+        const userNameDisplay = document.getElementById('userName');
+        const userEmailDisplay = document.getElementById('userEmail');
+
+        if (loginButton && userAvatar) {
+            // Hide login button and show user avatar
+            loginButton.classList.add('hidden');
+            userAvatar.classList.remove('hidden');
+
+            // Set initials
+            if (userInitials) {
+                userInitials.textContent = Auth.getInitials(userName);
+            }
+
+            // Set user name and email in dropdown
+            if (userNameDisplay && user) {
+                userNameDisplay.textContent = user.name || userName;
+            }
+            if (userEmailDisplay && user) {
+                userEmailDisplay.textContent = user.email || '';
+            }
+        }
+    },
+
+    hideUserAvatar: () => {
+        const loginButton = document.getElementById('loginButton');
+        const userAvatar = document.getElementById('userAvatar');
+
+        if (loginButton && userAvatar) {
+            // Show login button and hide user avatar
+            loginButton.classList.remove('hidden');
+            userAvatar.classList.add('hidden');
         }
     }
 };

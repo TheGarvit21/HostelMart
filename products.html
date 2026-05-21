@@ -3,41 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Products - HostelMart</title>
+    <title>Products - HMart</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/cart.js"></script>
+    <script src="assets/js/seller.js"></script>
+    <script src="assets/js/store.js"></script>
+    <script src="data/products.js"></script>
 </head>
-<body class="bg-gray-100 min-h-screen">
-    <!-- Navigation -->
-    <nav class="bg-white shadow-md">
+<body class="bg-gray-50">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm border-b border-gray-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
                 <div class="flex items-center">
-                    <h1 class="text-2xl font-bold text-gray-800">HostelMart</h1>
+                    <div class="flex items-center space-x-2 logo-container cursor-pointer" onclick="window.location.href='index.html'">
+                        <div class="relative w-10 h-10">
+                            <svg viewBox="0 0 40 40" class="w-full h-full">
+                                <!-- Modern gradient background -->
+                                <defs>
+                                    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#10B981;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <rect x="2" y="2" width="36" height="36" rx="8" fill="url(#logoGradient)"/>
+                                
+                                <!-- Shopping cart icon -->
+                                <path d="M8 10 L11 10 L13 24 L29 24 L31 16 L15 16" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="14" cy="28" r="2" fill="white"/>
+                                <circle cx="28" cy="28" r="2" fill="white"/>
+                                
+                                <!-- Small house accent -->
+                                <rect x="18" y="10" width="6" height="5" fill="#FB923C" rx="1"/>
+                                <path d="M18 10 L21 7 L24 10" fill="#FB923C"/>
+                            </svg>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="text-2xl font-bold logo-green logo-text">HMart</span>
+                        </div>
+                    </div>
                 </div>
-                
-                <div class="flex items-center space-x-4">
-                    <a href="index.html" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
-                        <i class="fas fa-home mr-2"></i>Home
-                    </a>
-                    <a href="login.html" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
-                        <i class="fas fa-sign-in-alt mr-2"></i>Login
-                    </a>
-                    <a href="signup.html" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
-                        <i class="fas fa-user-plus mr-2"></i>Sign Up
-                    </a>
+
+                <!-- Navigation Links -->
+                <div class="flex items-center space-x-8 ml-8">
+                    <a href="index.html" class="text-green-500 hover:text-green-700 font-semibold transition-colors duration-200">Home</a>
+                    <a href="products.html" class="text-green-700 font-semibold transition-colors duration-200">Products</a>
+                    <a href="about.html" class="text-green-500 hover:text-green-700 font-semibold transition-colors duration-200">About</a>
+                    <a href="contact.html" class="text-green-500 hover:text-green-700 font-semibold transition-colors duration-200">Contact Us</a>
+                </div>
+
+                <!-- Right Side Buttons -->
+                <div class="flex items-center space-x-6">
+                    <!-- Search Bar -->
+                    <div class="max-w-md">
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </div>
+                            <input type="text" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" placeholder="Search products..."/>
+                        </div>
+                    </div>
+
+                    <!-- My Cart Button (icon only - JioMart style) -->
+                    <button onclick="openCartModal()" class="relative flex items-center justify-center w-10 h-10 text-gray-600 hover:text-green-600 focus:outline-none">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                        <span id="cartCount" class="absolute -top-1 -right-1 bg-green-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center hidden">0</span>
+                    </button>
+
+                    <!-- Login Button (hidden when logged in) -->
+                    <button id="loginButton" onclick="window.location.href='login.html'" class="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-green-600 focus:outline-none">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                        <span class="hidden sm:inline">Login</span>
+                    </button>
+
+                    <!-- User Avatar (shown when logged in) -->
+                    <div id="userAvatar" class="hidden relative group">
+                        <button class="w-10 h-10 rounded-full bg-gradient-to-r from-green-500 to-green-600 text-white font-bold text-sm flex items-center justify-center hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-md">
+                            <span id="userInitials">GG</span>
+                        </button>
+                        <!-- Dropdown Menu -->
+                        <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                            <div class="py-2">
+                                <div class="px-4 py-2 border-b border-gray-100">
+                                    <p class="text-sm font-semibold text-gray-800" id="userName">GaganGarg</p>
+                                    <p class="text-xs text-gray-500" id="userEmail">gagan@example.com</p>
+                                </div>
+                                <button onclick="window.location.href='index.html'" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c-.94 1.543.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c.94-1.543-.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                    Settings
+                                </button>
+                                <button onclick="logout()" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                    </svg>
+                                    Logout
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </nav>
+
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-r from-green-600 to-green-500 py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">Our Products</h1>
+            <p class="text-xl text-green-100 max-w-2xl mx-auto">Browse our wide selection of products for hostel residents</p>
+        </div>
+    </section>
     
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div class="text-center mb-8">
-            <h2 class="text-3xl font-bold text-gray-800">Available Products</h2>
-            <p class="text-gray-600 mt-2">Browse our wide selection of products for hostel residents</p>
-        </div>
-        
+    <main class="max-w-7xl mx-auto py-8 sm:px-6 lg:px-8">
         <!-- Product Grid -->
         <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             <!-- Products will be loaded here -->
