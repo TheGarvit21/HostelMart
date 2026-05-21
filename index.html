@@ -20,13 +20,31 @@
             <div class="flex items-center justify-between h-16">
                 <!-- Logo -->
                 <div class="flex items-center">
-                    <div class="flex items-center space-x-2">
-                        <div class="w-8 h-8 logo-orange rounded-lg flex items-center justify-center">
-                            <div class="w-5 h-5 bg-white rounded-sm"></div>
+                    <div class="flex items-center space-x-2 logo-container cursor-pointer">
+                        <div class="relative w-10 h-10">
+                            <svg viewBox="0 0 40 40" class="w-full h-full">
+                                <!-- Modern gradient background -->
+                                <defs>
+                                    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#10B981;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <rect x="2" y="2" width="36" height="36" rx="8" fill="url(#logoGradient)"/>
+                                
+                                <!-- Shopping cart icon -->
+                                <path d="M8 10 L11 10 L13 24 L29 24 L31 16 L15 16" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="14" cy="28" r="2" fill="white"/>
+                                <circle cx="28" cy="28" r="2" fill="white"/>
+                                
+                                <!-- Small house accent -->
+                                <rect x="18" y="10" width="6" height="5" fill="#FB923C" rx="1"/>
+                                <path d="M18 10 L21 7 L24 10" fill="#FB923C"/>
+                            </svg>
                         </div>
                         <div class="flex flex-col leading-none">
-                            <span class="text-xl font-bold logo-green">Hostel</span>
-                            <span class="text-xl font-bold logo-green">Mart</span>
+                            <span class="text-xl font-bold logo-green logo-text">Hostel</span>
+                            <span class="text-xl font-bold logo-green logo-text">Mart</span>
                         </div>
                     </div>
                 </div>
