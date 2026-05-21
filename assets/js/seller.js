@@ -83,10 +83,10 @@ const Seller = {
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                     <div class="p-6 border-b border-gray-200 flex justify-between items-center">
                         <h3 class="font-bold text-gray-800">Recent Delivery Orders</h3>
-                        ${orders.some(o => o.status === 'pending') ? 
-                            `<button onclick="Seller.markAllDelivered()" class="text-sm bg-green-600 text-white px-3 py-1.5 rounded-lg hover:bg-green-700 font-semibold transition duration-150">Mark All Delivered</button>` 
-                            : ''
-                        }
+                        ${orders.some(o => o.status === 'pending') ?
+                    `<button onclick="Seller.markAllDelivered()" class="text-sm bg-green-600 text-white px-3 py-1.5 rounded-lg hover:bg-green-700 font-semibold transition duration-150">Mark All Delivered</button>`
+                    : ''
+                }
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left">
@@ -119,11 +119,11 @@ const Seller = {
                                             </span>
                                         </td>
                                         <td class="p-4">
-                                            ${order.status === 'pending' ? 
-                                                `<button onclick="Seller.updateStatus('${order._id}', 'delivered')" class="text-green-600 hover:text-green-700 font-semibold hover:underline">Mark Delivered</button>` 
-                                                : '<span class="text-gray-400">-</span>'
-                                            }
-                                        </td>
+                                             <select onchange="Seller.updateStatus('${order._id}', this.value)" class="bg-white border border-gray-300 rounded px-2 py-1 text-xs font-semibold text-gray-700 outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 cursor-pointer">
+                                                 <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>PENDING</option>
+                                                 <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>DELIVERED</option>
+                                             </select>
+                                         </td>
                                     </tr>
                                 `).join('')}
                                 ${orders.length === 0 ? '<tr><td colspan="8" class="p-8 text-center text-gray-500 font-semibold">No orders placed yet.</td></tr>' : ''}
@@ -177,6 +177,7 @@ const Seller = {
             });
             const data = await response.json();
             const products = data.success ? data.products : [];
+            Seller.currentSellerProducts = products;
 
             content.innerHTML = `
                 <div class="flex justify-between items-center mb-6">
@@ -220,7 +221,10 @@ const Seller = {
                                         <td class="p-4 text-gray-600 text-sm max-w-xs truncate">${product.description}</td>
                                         <td class="p-4 font-bold text-green-600">₹${product.price}</td>
                                         <td class="p-4 text-gray-700 font-semibold">${product.deliveryFee > 0 ? `₹${product.deliveryFee}` : '<span class="text-green-600 font-bold">Free</span>'}</td>
-                                        <td class="p-4">
+                                        <td class="p-4 flex items-center space-x-2">
+                                            <button onclick="Seller.showEditProductForm('${product._id}')" class="text-green-600 hover:text-green-700 font-semibold hover:bg-green-50 px-3 py-1 rounded-lg transition duration-150">
+                                                Edit
+                                            </button>
                                             <button onclick="Seller.deleteProduct('${product._id}')" class="text-red-500 hover:text-red-700 font-semibold hover:bg-red-50 px-3 py-1 rounded-lg transition duration-150">
                                                 Delete
                                             </button>
@@ -279,6 +283,111 @@ const Seller = {
         }
     },
 
+    showEditProductForm: (productId) => {
+        const content = document.getElementById('sellerContent');
+        if (!content) return;
+
+        const products = Seller.currentSellerProducts || [];
+        const product = products.find(p => p._id === productId);
+
+        if (!product) {
+            alert('Product details not found.');
+            Seller.showMyProducts();
+            return;
+        }
+
+        content.innerHTML = `
+            <div class="mb-6">
+                <button onclick="Seller.showMyProducts()" class="text-sm text-green-600 hover:text-green-700 font-semibold flex items-center mb-2">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    Back to Catalog
+                </button>
+                <h2 class="text-2xl font-bold text-gray-800">Edit Product</h2>
+            </div>
+
+            <div class="bg-white p-8 rounded-lg shadow-sm border border-gray-200 max-w-2xl">
+                <form onsubmit="Seller.handleUpdateProduct(event, '${product._id}')" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
+                        <input type="text" name="name" required value="${product.name}" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                        <textarea name="description" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none h-24">${product.description}</textarea>
+                    </div>
+                    <div class="grid grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Price (₹)</label>
+                            <input type="number" name="price" required min="1" value="${product.price}" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Delivery Fee (₹)</label>
+                            <input type="number" name="deliveryFee" required min="0" value="${product.deliveryFee || 0}" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
+                            <input type="url" name="image" required value="${product.image}" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none">
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4 pt-2">
+                        <button type="submit" class="flex-1 bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 transition duration-150 shadow">
+                            Save Changes
+                        </button>
+                        <button type="button" onclick="Seller.showMyProducts()" class="flex-1 bg-gray-100 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-200 transition duration-150">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        `;
+    },
+
+    handleUpdateProduct: async (event, productId) => {
+        event.preventDefault();
+        const token = Cookie.get('token');
+        if (!token) {
+            alert('Session expired. Please log in again.');
+            window.location.href = 'login.html';
+            return;
+        }
+
+        const API_BASE_URL = window.CONFIG ? window.CONFIG.API_BASE_URL : 'http://localhost:5000/api';
+        const formData = new FormData(event.target);
+
+        const payload = {
+            name: formData.get('name'),
+            description: formData.get('description'),
+            price: parseFloat(formData.get('price')),
+            deliveryFee: parseFloat(formData.get('deliveryFee') || 0),
+            image: formData.get('image')
+        };
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                alert('Product updated successfully!');
+                Seller.showMyProducts();
+            } else {
+                alert(data.message || 'Failed to update product.');
+            }
+        } catch (error) {
+            console.error('[UpdateProduct] Connection Error:', error);
+            alert('Failed to connect to the backend server. Please verify connections.');
+        }
+    },
+
     showAddProductForm: () => {
         const content = document.getElementById('sellerContent');
         if (!content) return;
@@ -330,7 +439,7 @@ const Seller = {
 
         const API_BASE_URL = window.CONFIG ? window.CONFIG.API_BASE_URL : 'http://localhost:5000/api';
         const formData = new FormData(event.target);
-        
+
         const payload = {
             name: formData.get('name'),
             description: formData.get('description'),
