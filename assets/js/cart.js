@@ -32,6 +32,7 @@ const Cart = {
                     id: idStr,
                     name: product.name,
                     price: product.price,
+                    deliveryFee: product.deliveryFee || 0,
                     image: product.image,
                     quantity: 1
                 });
@@ -107,9 +108,15 @@ const Cart = {
             `;
         }).join('');
 
-        const deliveryFee = 20;
+        const deliveryFee = Cart.data.reduce((sum, item) => sum + ((item.deliveryFee || 0) * item.quantity), 0);
         const total = subtotal + deliveryFee;
+        
         subtotalElement.textContent = `₹${subtotal}`;
+        
+        const deliveryFeeElement = document.getElementById('cartDeliveryFee');
+        if (deliveryFeeElement) {
+            deliveryFeeElement.textContent = deliveryFee > 0 ? `₹${deliveryFee}` : 'Free';
+        }
         totalElement.textContent = `₹${total}`;
     },
 
@@ -137,7 +144,8 @@ const Cart = {
         }
 
         const subtotal = Cart.data.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        const total = subtotal + 20;
+        const deliveryFee = Cart.data.reduce((sum, item) => sum + ((item.deliveryFee || 0) * item.quantity), 0);
+        const total = subtotal + deliveryFee;
 
         // Map items payload to conform strictly with OrderItemSchema in MongoDB
         const itemsPayload = Cart.data.map(item => ({
@@ -159,6 +167,7 @@ const Cart = {
                 body: JSON.stringify({
                     items: itemsPayload,
                     total,
+                    deliveryFee,
                     deliveryRoom,
                     deliveryMobile
                 })
@@ -188,5 +197,23 @@ window.updateProductQuantity = Cart.updateQuantity;
 window.updateQuantity = Cart.updateQuantity;
 window.removeFromCart = Cart.remove;
 window.placeOrder = Cart.placeOrder;
-window.openCartModal = () => { Cart.updateDisplay(); UI.showModal('cartModal'); };
+window.openCartModal = () => { 
+    Cart.updateDisplay(); 
+    
+    // Auto-fill delivery details with current logged-in user info
+    const user = Storage.get('currentUser', null);
+    if (user) {
+        const roomInput = document.getElementById('deliveryRoom');
+        const mobileInput = document.getElementById('deliveryMobile');
+        
+        if (roomInput && !roomInput.value) {
+            roomInput.value = user.room || '';
+        }
+        if (mobileInput && !mobileInput.value) {
+            mobileInput.value = user.mobile || '';
+        }
+    }
+    
+    UI.showModal('cartModal'); 
+};
 window.closeCartModal = () => UI.hideModal('cartModal');

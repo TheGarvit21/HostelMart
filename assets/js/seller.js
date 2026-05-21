@@ -97,6 +97,7 @@ const Seller = {
                                     <th class="p-4">Delivery Room</th>
                                     <th class="p-4">Mobile</th>
                                     <th class="p-4">Items Ordered</th>
+                                    <th class="p-4">Delivery Fee</th>
                                     <th class="p-4">Total Price</th>
                                     <th class="p-4">Status</th>
                                     <th class="p-4">Action</th>
@@ -110,6 +111,7 @@ const Seller = {
                                         <td class="p-4 text-gray-700">${order.deliveryRoom || 'N/A'}</td>
                                         <td class="p-4 text-gray-700 font-mono">${order.deliveryMobile || 'N/A'}</td>
                                         <td class="p-4 text-gray-700">${order.items.map(i => `${i.name} (x${i.quantity})`).join(', ')}</td>
+                                        <td class="p-4 font-semibold text-gray-700">${order.deliveryFee > 0 ? `₹${order.deliveryFee}` : '<span class="text-green-600 font-bold">Free</span>'}</td>
                                         <td class="p-4 font-bold text-gray-800">₹${order.total}</td>
                                         <td class="p-4">
                                             <span class="px-2 py-1 rounded-full text-xs font-semibold ${order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}">
@@ -204,6 +206,7 @@ const Seller = {
                                     <th class="p-4">Name</th>
                                     <th class="p-4">Description</th>
                                     <th class="p-4">Price</th>
+                                    <th class="p-4">Delivery Fee</th>
                                     <th class="p-4">Actions</th>
                                 </tr>
                             </thead>
@@ -216,6 +219,7 @@ const Seller = {
                                         <td class="p-4 font-semibold text-gray-800">${product.name}</td>
                                         <td class="p-4 text-gray-600 text-sm max-w-xs truncate">${product.description}</td>
                                         <td class="p-4 font-bold text-green-600">₹${product.price}</td>
+                                        <td class="p-4 text-gray-700 font-semibold">${product.deliveryFee > 0 ? `₹${product.deliveryFee}` : '<span class="text-green-600 font-bold">Free</span>'}</td>
                                         <td class="p-4">
                                             <button onclick="Seller.deleteProduct('${product._id}')" class="text-red-500 hover:text-red-700 font-semibold hover:bg-red-50 px-3 py-1 rounded-lg transition duration-150">
                                                 Delete
@@ -291,10 +295,14 @@ const Seller = {
                         <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
                         <textarea name="description" required placeholder="Describe product flavor, pack size, category..." class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none h-24"></textarea>
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-3 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Price (₹)</label>
                             <input type="number" name="price" required min="1" placeholder="20" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Delivery Fee (₹)</label>
+                            <input type="number" name="deliveryFee" required min="0" value="0" placeholder="0" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
@@ -327,6 +335,7 @@ const Seller = {
             name: formData.get('name'),
             description: formData.get('description'),
             price: parseFloat(formData.get('price')),
+            deliveryFee: parseFloat(formData.get('deliveryFee') || 0),
             image: formData.get('image')
         };
 

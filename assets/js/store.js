@@ -73,7 +73,12 @@ const Store = {
                         </div>
                         <div>
                             <div class="flex justify-between items-center mt-3 pt-3 border-t border-gray-100">
-                                <p class="text-lg font-bold text-green-600">₹${product.price}</p>
+                                <div>
+                                    <p class="text-lg font-bold text-green-600">₹${product.price}</p>
+                                    <span class="text-[10px] text-gray-500 font-semibold block -mt-1">
+                                        ${product.deliveryFee > 0 ? `+ ₹${product.deliveryFee} Delivery / item` : 'Free Delivery'}
+                                    </span>
+                                </div>
                                 <span class="text-xs text-gray-400">Seller: ${(product.seller && product.seller.name) || 'Store'}</span>
                             </div>
                             ${controlsHTML}
