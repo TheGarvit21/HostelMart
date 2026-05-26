@@ -5,6 +5,9 @@
 const Seller = {
     showDashboard: async () => {
         const content = document.getElementById('sellerContent');
+        const sellerSidebar = document.getElementById('sellerSidebar');
+        const userProductGrid = document.getElementById('userProductGrid');
+
         if (!content) return;
 
         const token = Cookie.get('token');
@@ -15,6 +18,23 @@ const Seller = {
         }
 
         const API_BASE_URL = window.CONFIG ? window.CONFIG.API_BASE_URL : 'http://localhost:5000/api';
+
+        // Show seller sidebar and content, hide user product grid
+        if (sellerSidebar) {
+            sellerSidebar.classList.remove('hidden');
+        }
+        if (content) {
+            content.classList.remove('hidden');
+        }
+        if (userProductGrid) {
+            userProductGrid.classList.add('hidden');
+        }
+
+        // Hide hero banner when seller dashboard is shown
+        const heroBanner = document.getElementById('heroBanner');
+        if (heroBanner) {
+            heroBanner.style.display = 'none';
+        }
 
         // Add a clean loading state to the screen
         content.innerHTML = `
@@ -317,6 +337,16 @@ const Seller = {
                         <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
                         <textarea name="description" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none h-24">${product.description}</textarea>
                     </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                        <select name="category" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none">
+                            <option value="">Select Category</option>
+                            <option value="Snacks" ${product.category === 'Snacks' ? 'selected' : ''}>Snacks</option>
+                            <option value="Beverages" ${product.category === 'Beverages' ? 'selected' : ''}>Beverages</option>
+                            <option value="Groceries" ${product.category === 'Groceries' ? 'selected' : ''}>Groceries</option>
+                            <option value="Personal Care" ${product.category === 'Personal Care' ? 'selected' : ''}>Personal Care</option>
+                        </select>
+                    </div>
                     <div class="grid grid-cols-3 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Price (₹)</label>
@@ -359,6 +389,7 @@ const Seller = {
         const payload = {
             name: formData.get('name'),
             description: formData.get('description'),
+            category: formData.get('category'),
             price: parseFloat(formData.get('price')),
             deliveryFee: parseFloat(formData.get('deliveryFee') || 0),
             image: formData.get('image')
@@ -404,6 +435,16 @@ const Seller = {
                         <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
                         <textarea name="description" required placeholder="Describe product flavor, pack size, category..." class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none h-24"></textarea>
                     </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                        <select name="category" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none">
+                            <option value="">Select Category</option>
+                            <option value="Snacks">Snacks</option>
+                            <option value="Beverages">Beverages</option>
+                            <option value="Groceries">Groceries</option>
+                            <option value="Personal Care">Personal Care</option>
+                        </select>
+                    </div>
                     <div class="grid grid-cols-3 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Price (₹)</label>
@@ -443,6 +484,7 @@ const Seller = {
         const payload = {
             name: formData.get('name'),
             description: formData.get('description'),
+            category: formData.get('category'),
             price: parseFloat(formData.get('price')),
             deliveryFee: parseFloat(formData.get('deliveryFee') || 0),
             image: formData.get('image')

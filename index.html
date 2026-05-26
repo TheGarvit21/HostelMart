@@ -372,7 +372,7 @@
     </div>
 
     <!-- Hero Banner Section -->
-    <section class="relative bg-gradient-to-r from-green-600 to-green-500 overflow-hidden">
+    <section id="heroBanner" class="relative bg-gradient-to-r from-green-600 to-green-500 overflow-hidden">
         <div class="absolute inset-0 opacity-10">
             <div class="absolute top-10 left-10 w-32 h-32 bg-white rounded-full"></div>
             <div class="absolute top-20 right-20 w-24 h-24 bg-white rounded-full"></div>
@@ -447,8 +447,20 @@
             
             <!-- Content Area -->
             <div class="flex-1">
+                <!-- Category Filter -->
+                <div id="categoryFilter" class="mt-8 mb-6">
+                    <div class="flex flex-wrap gap-3 items-center">
+                        <span class="text-gray-600 font-semibold">Filter by:</span>
+                        <button onclick="filterByCategory('all')" class="category-btn active px-4 py-2 rounded-full bg-green-500 text-white font-medium hover:bg-green-600 transition-colors" data-category="all">All</button>
+                        <button onclick="filterByCategory('Snacks')" class="category-btn px-4 py-2 rounded-full bg-gray-200 text-gray-700 font-medium hover:bg-green-500 hover:text-white transition-colors" data-category="Snacks">Snacks</button>
+                        <button onclick="filterByCategory('Beverages')" class="category-btn px-4 py-2 rounded-full bg-gray-200 text-gray-700 font-medium hover:bg-green-500 hover:text-white transition-colors" data-category="Beverages">Beverages</button>
+                        <button onclick="filterByCategory('Groceries')" class="category-btn px-4 py-2 rounded-full bg-gray-200 text-gray-700 font-medium hover:bg-green-500 hover:text-white transition-colors" data-category="Groceries">Groceries</button>
+                        <button onclick="filterByCategory('Personal Care')" class="category-btn px-4 py-2 rounded-full bg-gray-200 text-gray-700 font-medium hover:bg-green-500 hover:text-white transition-colors" data-category="Personal Care">Personal Care</button>
+                    </div>
+                </div>
+                
                 <!-- User Product Grid -->
-                <div id="userProductGrid" class="mt-8 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div id="userProductGrid" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     <!-- Products will be loaded dynamically here -->
                 </div>
                 
